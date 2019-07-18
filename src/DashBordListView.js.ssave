@@ -1,0 +1,67 @@
+import React, { Component } from "react";
+import DashBordView from "./DashBordView";
+
+class DashBordListView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null,
+      isLoaded: false,
+      items: []
+    };
+    this.data = [];
+    this.requestOptions = {
+      credentials: "include",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": " application/json",
+        Authorization:
+          "Bearer eyJrIjoiRDhHb2NLYmljdmNsY2hCMDE0a1BWS3NNanB5MEpGN0UiLCJuIjoidGVzdCIsImlkIjoxfQ=="
+      }
+    };
+  }
+
+  componentDidMount() {
+    fetch("http://localhost:3000/api/search", this.requestOptions)
+      .then(res => Promise.resolve(res))
+      .then(response => {
+        response.json().then(
+          data => {
+            this.setState({
+              isLoaded: true,
+              items: data
+            });
+          },
+          error => {
+            this.setState({
+              isLoaded: true,
+              error
+            });
+          }
+        );
+      });
+  }
+  render() {
+    const { error, isLoaded, items } = this.state;
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div>Loading...</div>;
+    } else {
+      if (items) {
+        return (
+          <div>
+            {items.map(item => (
+              <DashBordView key={item.id} prop={item} />
+            ))}
+          </div>
+        );
+      } else {
+        return <div>RIENS</div>;
+      }
+    }
+  }
+}
+
+export default DashBordListView;
